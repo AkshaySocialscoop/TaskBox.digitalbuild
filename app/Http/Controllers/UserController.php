@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\CalendarEvent;
 use App\Models\Attendance;
-
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -219,6 +219,46 @@ public function viewAttendance()
 
     return view('user.view-attendance.index', compact('events'));
 }
+
+
+ public function updatePassword(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        // Logged in user
+        $user = Auth::user();
+
+        // Check old password
+        if (!Hash::check($request->old_password, $user->password)) {
+
+            return back()->with('error', 'Old password is incorrect');
+        }
+
+        // Update password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Redirect according to role
+        if ($user->role == 'super_admin') {
+
+            return redirect()->route('super-admin.dashboard')
+                ->with('success', 'Super Admin password updated successfully');
+
+        } elseif ($user->role == 'admin') {
+
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Admin password updated successfully');
+
+        } else {
+
+            return redirect()->route('user.dashboard')
+                ->with('success', 'User password updated successfully');
+        }
+    }
 
 }
     

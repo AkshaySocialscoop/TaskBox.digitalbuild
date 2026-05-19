@@ -15,6 +15,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LeaveRequestController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -70,7 +71,12 @@ Route::middleware([
     Route::get('/tasks/counts', [UserController::class, 'taskCounts'])->name('tasks.counts');
     Route::post('/calendar/events/store', [UserController::class, 'calendarEventsStore'])->name('calendar.events.store');
     Route::post('/calendar/{id}/status', [UserController::class, 'updatePostStatus']);
-    Route::get('/view-attendance', [UserController::class, 'viewAttendance'])->name('view-attendance');
+    Route::get('/view-attendance', [UserController::class, 'viewAttendance'])->name('view-attendance'); 
+    Route::post('/password-change', [UserController::class, 'updatePassword'])->middleware('auth')->name('password.change');
+
+
+    Route::get('/user/apply-leave', [LeaveRequestController::class, 'create'])->name('leave.apply');
+    Route::post('/user/apply-leave', [LeaveRequestController::class, 'store'])->name('leave.store');
 
 
     // sticky-notes routes
@@ -137,6 +143,9 @@ Route::middleware(['auth','role:super_admin'])->group(function () {
     // Attendance Routes
     Route::resource('attendance',AttendanceController::class);
     Route::get('/attendance-view', [AttendanceController::class, 'viewAttendance'])->name('attendance.viewattendance');
+    Route::get('/super-admin/leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('super-admin.leave.requests');
+    Route::post('/super-admin/leave-requests/{id}/approve', [LeaveRequestController::class, 'approve'])->name('super-admin.leave.approve');
+    Route::post('/super-admin/leave-requests/{id}/reject', [LeaveRequestController::class, 'reject'])->name('super-admin.leave.reject');
 
 });
 

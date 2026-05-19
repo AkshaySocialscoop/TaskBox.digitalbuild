@@ -45,6 +45,8 @@
                 </li>
                 <li><a href="{{ route('attendance.viewattendance') }}"><i class="material-icons-outlined">arrow_right</i>View Attendance</a>
                 </li>
+                <li><a href="{{ route('super-admin.leave.requests') }}"><i class="material-icons-outlined">arrow_right</i>Leave Requests</a>
+                </li>
                 <li><a href="app-invoice.html"><i class="material-icons-outlined">arrow_right</i>Reports</a>
                 </li>
               </ul>
@@ -133,6 +135,13 @@
                 <div class="parent-icon"><i class="material-icons-outlined">description</i>
                 </div>
                 <div class="menu-title">View Attendance</div>
+              </a>
+            </li> 
+            <li>
+              <a href="{{ route('leave.apply') }}">
+                <div class="parent-icon"><i class="material-icons-outlined">beach_access</i>
+                </div>
+                <div class="menu-title">Apply Leave</div>
               </a>
             </li> 
             <li>
