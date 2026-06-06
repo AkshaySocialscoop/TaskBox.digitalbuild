@@ -218,7 +218,7 @@
             </div>
             <div class="row g-2">
                 @foreach($projects as $project)
-                <div class="col-6 ">
+                <div class="col-12 col-md-6 ">
                     <div class="project-box border-start border-end border-2" onmouseover="this.classList.add(
                                 '{{ $project->status == 'pending' ? 'border-danger' :
                                     ($project->status == 'in_progress' ? 'border-warning' :
@@ -453,77 +453,90 @@
  <div class="modal fade" id="taskDetailModal" tabindex="-1">
      <div class="modal-dialog modal-xl modal-dialog-centered">
          <div class="modal-content rounded-4 overflow-hidden">
+             <form method="POST" action="{{ route('tasks.updateStatus') }}">
+                 @csrf
+                 <input type="hidden" name="task_id" id="modalTaskId">
 
-             <!-- HEADER -->
-             <div class="modal-header">
-                 <div>
-                     <h5 class="modal-title fw-semibold mb-0">Task details</h5>
-                 </div>
-                 <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal"></button>
-             </div>
-
-             <!-- BODY -->
-             <div class="modal-body p-4">
-                 <!--  -->
-                 <h5 class="modal-title fw-semibold mb-0" id="modalTaskTitle"></h5>
-
-                 <!-- Description -->
-                 <p class="text-muted mb-4" id="modalTaskDescription"></p>
-
-                 <!-- META INFO -->
-                 <div class="row g-3 mb-4">
-
-                     <div class="col-md-3">
-                         <div class="meta-box">
-                             <span class="label">Status</span>
-
-                             <select class="form-select form-select-sm mt-1" id="modalTaskStatus">
-                                 <option value="Pending">Pending</option>
-                                 <option value="In_Progress">In Progress</option>
-                                 <option value="Completed">Completed</option>
-                             </select>
-
-                         </div>
+                 <!-- HEADER -->
+                 <div class="modal-header">
+                     <div>
+                         <h5 class="modal-title fw-semibold mb-0">Task details</h5>
                      </div>
-
-
-                     <div class="col-md-3">
-                         <div class="meta-box">
-                             <span class="label">Priority</span>
-                             <span class="value badge bg-warning-subtle text-warning" id="modalTaskPriority"></span>
-                         </div>
-                     </div>
-
-                     <div class="col-md-3">
-                         <div class="meta-box">
-                             <span class="label">Assigned To</span>
-                             <span class="value fw-semibold" id="modalTaskAssigned"></span>
-                         </div>
-                     </div>
-
-                     <div class="col-md-3">
-                         <div class="meta-box">
-                             <span class="label">Due Date</span>
-                             <span class="value" id="modalTaskDue"></span>
-                         </div>
-                     </div>
-                    
+                     <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal"></button>
                  </div>
 
-                 <!-- PROGRESS -->
-                 <div>
-                     <div class="d-flex justify-content-between mb-1">
-                         <span class="fw-semibold">Progress</span>
-                         <span class="text-muted small" id="modalTaskProgressText"></span>
+                 <!-- BODY -->
+                 <div class="modal-body p-4">
+                     <!--  -->
+                     <h5 class="modal-title fw-semibold mb-0" id="modalTaskTitle"></h5>
+
+                     <!-- Description -->
+                     <p class="text-muted mb-4" id="modalTaskDescription"></p>
+
+                     <div class="mb-4">
+                         <label for="modalTaskComment" class="form-label fw-semibold">Note</label>
+                         <textarea class="form-control" name="comment" id="modalTaskComment" rows="3" placeholder="Add a note"></textarea>
                      </div>
 
-                     <div class="progress rounded-pill" style="height: 18px;">
-                         <div class="progress-bar rounded-pill" id="modalTaskProgressBar"></div>
+                     <!-- META INFO -->
+                     <div class="row g-3 mb-4">
+
+                         <div class="col-md-3">
+                             <div class="meta-box">
+                                 <span class="label">Status</span>
+
+                                 <select class="form-select form-select-sm mt-1" name="status" id="modalTaskStatus">
+                                     <option value="Pending">Pending</option>
+                                     <option value="In_Progress">In Progress</option>
+                                     <option value="Completed">Completed</option>
+                                 </select>
+
+                             </div>
+                         </div>
+
+
+                         <div class="col-md-3">
+                             <div class="meta-box">
+                                 <span class="label">Priority</span>
+                                 <span class="value badge bg-warning-subtle text-warning" id="modalTaskPriority"></span>
+                             </div>
+                         </div>
+
+                         <div class="col-md-3">
+                             <div class="meta-box">
+                                 <span class="label">Assigned To</span>
+                                 <span class="value fw-semibold" id="modalTaskAssigned"></span>
+                             </div>
+                         </div>
+
+                         <div class="col-md-3">
+                             <div class="meta-box">
+                                 <span class="label">Due Date</span>
+                                 <span class="value" id="modalTaskDue"></span>
+                             </div>
+                         </div>
+                        
                      </div>
+
+                     <!-- PROGRESS -->
+                     <div>
+                         <div class="d-flex justify-content-between mb-1">
+                             <span class="fw-semibold">Progress</span>
+                             <span class="text-muted small" id="modalTaskProgressText"></span>
+                         </div>
+
+                         <div class="progress rounded-pill" style="height: 18px;">
+                             <div class="progress-bar rounded-pill" id="modalTaskProgressBar"></div>
+                         </div>
+                     </div>
+
                  </div>
 
-             </div>
-
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="submit" class="btn btn-primary">Save Status</button>
+                 </div>
+             </form>
          </div>
      </div>
  </div>

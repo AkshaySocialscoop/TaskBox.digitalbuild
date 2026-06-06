@@ -34,8 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('modalTaskPriority').textContent = btn.dataset.priority;
 
-        document.getElementById('modalTaskComment').value = JSON.parse(btn.getAttribute('data-comment'));
-
+        document.getElementById('modalTaskId').value = btn.dataset.taskId;
+        const commentJson = btn.getAttribute('data-comment');
+        document.getElementById('modalTaskComment').value = commentJson ? JSON.parse(commentJson) : '';
 
 
         statusSelect.value = btn.dataset.status;
@@ -47,14 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-
-    // CHANGE STATUS
-
-    statusSelect.addEventListener('change', function () {
-
-        updateTaskStatus(this.value);
-
-    });
 
 });
 

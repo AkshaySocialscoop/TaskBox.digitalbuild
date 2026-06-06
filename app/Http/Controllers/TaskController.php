@@ -134,6 +134,11 @@ class TaskController extends Controller
 
     {
 
+        $request->validate([
+            'status' => 'required|string',
+            'comment' => 'nullable|string|max:255',
+        ]);
+
         $task = Task::findOrFail($request->task_id);
 
         $oldStatus = $task->status;
@@ -141,6 +146,7 @@ class TaskController extends Controller
 
 
         $task->status = $request->status;
+        $task->comment = $request->comment;
 
         $task->save();
 
@@ -198,18 +204,16 @@ class TaskController extends Controller
 
 
 
-        return response()->json([
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'progress' => $progress,
+                'statusLabel' => ucfirst(str_replace('_', ' ', $task->status)),
+                'statusClass' => $statusClass
+            ]);
+        }
 
-            'success' => true,
-
-            'progress' => $progress,
-
-            'statusLabel' => ucfirst(str_replace('_', ' ', $task->status)),
-
-            'statusClass' => $statusClass
-
-        ]);
-
+        return redirect()->back()->with('success', 'Task status updated successfully!');
     }
 
 
