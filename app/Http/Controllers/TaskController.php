@@ -213,7 +213,7 @@ class TaskController extends Controller
             ]);
         }
 
-        return redirect('/user/dashboard')->with('success', 'Task status updated successfully!');
+        return redirect()->back()->with('success', 'Task status updated successfully!');
     }
 
 
