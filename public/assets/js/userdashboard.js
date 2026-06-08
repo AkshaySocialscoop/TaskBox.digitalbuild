@@ -1,116 +1,41 @@
-let currentTaskId = null;
-
-
-
-// Open Task Detail Modal
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    refreshTaskCounts();
-
-    const modal = document.getElementById('taskDetailModal');
-
-    const statusSelect = document.getElementById('modalTaskStatus');
-
-
-
-    modal.addEventListener('show.bs.modal', function (event) {
-
-        const btn = event.relatedTarget;
-
-
-
-        currentTaskId = btn.dataset.taskId;
-
-
-
-        document.getElementById('modalTaskTitle').textContent = btn.dataset.title;
-
-        document.getElementById('modalTaskDescription').textContent = btn.dataset.description;
-
-        document.getElementById('modalTaskAssigned').textContent = btn.dataset.assigned;
-
-        document.getElementById('modalTaskDue').textContent = btn.dataset.due;
-
-        document.getElementById('modalTaskPriority').textContent = btn.dataset.priority;
-
-        document.getElementById('modalTaskId').value = btn.dataset.taskId;
-        const commentJson = btn.getAttribute('data-comment');
-        document.getElementById('modalTaskComment').value = commentJson ? JSON.parse(commentJson) : '';
-
-
-        statusSelect.value = btn.dataset.status;
-
-
-
-        updateModalProgress(btn.dataset.progress, btn.dataset.status);
-
-    });
-
-
-
-});
-
-
- 
-
-// Edit User Modal Population
-
 document.addEventListener('DOMContentLoaded', function () {
 
+    const taskModal = document.getElementById('taskDetailModal');
 
+    taskModal.addEventListener('show.bs.modal', function (event) {
 
-    const editModal = new bootstrap.Modal(
+        const button = event.relatedTarget;
 
-        document.getElementById('projectDetailsUpdateModal')
+        // Get data from button
+        const taskId = button.getAttribute('data-task-id');
+        const title = button.getAttribute('data-title');
+        const description = button.getAttribute('data-description');
+        const status = button.getAttribute('data-status');
+        const priority = button.getAttribute('data-priority');
+        const assigned = button.getAttribute('data-assigned');
+        const due = button.getAttribute('data-due');
+        const progress = button.getAttribute('data-progress');
+        const comment = button.getAttribute('data-comment');
 
-    );
+        // Fill modal fields
+        document.getElementById('modalTaskId').value = taskId;
+        document.getElementById('modalTaskTitle').textContent = title;
+        document.getElementById('modalTaskDescription').textContent = description;
+        document.getElementById('modalTaskStatus').value = status;
+        document.getElementById('modalTaskPriority').textContent = priority;
+        document.getElementById('modalTaskAssigned').textContent = assigned;
+        document.getElementById('modalTaskDue').textContent = due;
+        document.getElementById('modalTaskComment').value = comment || '';
 
-
-
-    document.querySelectorAll('.editProjectDetailBtn').forEach(button => {
-
-        button.addEventListener('click', function () {
-
-
-
-            document.getElementById('edit_id').value           = this.dataset.id;
-
-            document.getElementById('edit_name').value         = this.dataset.name;
-
-            document.getElementById('edit_format').value       = this.dataset.format;
-
-            document.getElementById('edit_link').value         = this.dataset.link;
-
-            document.getElementById('edit_requirement').value  = this.dataset.requirement;
-
-            document.getElementById('edit_comments').value     = this.dataset.comments;
-
-            document.getElementById('edit_status').value       = this.dataset.status;
-
-            const form = document.getElementById('editProjectDetailForm');
-
-            form.action = `/projects/${this.dataset.id}`;
-
-
-
-            editModal.show();
-
-        });
-
+        // Progress
+        document.getElementById('modalTaskProgressText').textContent = progress + '%';
+        document.getElementById('modalTaskProgressBar').style.width = progress + '%';
+        document.getElementById('modalTaskProgressBar').innerText = progress + '%';
     });
 
-
-
-});
-
-
-
-
-
-
-
-// Post status Update
+}); 
+ 
+ // Post status Update
 
 function toggleStatus(id, currentStatus, badgeEl) {
 

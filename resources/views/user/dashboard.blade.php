@@ -453,7 +453,7 @@
  <div class="modal fade" id="taskDetailModal" tabindex="-1">
      <div class="modal-dialog modal-xl modal-dialog-centered">
          <div class="modal-content rounded-4 overflow-hidden">
-             <form id="taskStatusForm" method="POST" action="{{ route('tasks.updateStatus') }}">
+             <form method="POST" action="{{ route('tasks.updateStatus') }}">
                  @csrf
                  <input type="hidden" name="task_id" id="modalTaskId">
 

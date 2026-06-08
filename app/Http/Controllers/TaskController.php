@@ -134,86 +134,13 @@ class TaskController extends Controller
 
     {
 
-        $request->validate([
-            'status' => 'required|string',
-            'comment' => 'nullable|string|max:255',
-        ]);
-
-        $task = Task::findOrFail($request->task_id);
-
-        $oldStatus = $task->status;
-
-
+       $task = Task::findOrFail($request->task_id);
 
         $task->status = $request->status;
         $task->comment = $request->comment;
-
         $task->save();
 
-
-
-        $progress = match ($task->status) {
-
-            'Completed'   => 100,
-
-            'In_Progress' => 75,
-
-            'Pending'     => 40,
-
-            default       => 0,
-
-        };
-
-
-
-        $statusClass = match ($task->status) {
-
-            'Completed'   => 'success',
-
-            'In_Progress' => 'primary',
-
-            'Pending'     => 'danger',
-
-            default       => 'secondary',
-
-        }; 
-
-        // 🔔 NOTIFICATION
-
-        if ($oldStatus !== 'Completed' && $task->status === 'Completed') {
-
-            
-
-            Notification::create([
-
-                'user_id'   => auth()->id(), // or auth()->id()
-
-                'created_by' => $task->created_by, 
-
-                'task_name' => $task->title, 
-
-                'brand_name'   => null,
-
-                'read_at'   => null,
-
-            ]);
-
-            
-
-        }
-
-
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'progress' => $progress,
-                'statusLabel' => ucfirst(str_replace('_', ' ', $task->status)),
-                'statusClass' => $statusClass
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Task status updated successfully!');
+        return redirect()->back()->with('success', 'Task updated successfully.');
     }
 
 
