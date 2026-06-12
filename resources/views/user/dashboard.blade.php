@@ -23,7 +23,7 @@
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-dark ">Completed</div>
-                    <div class="fw-bold text-success" style="font-size:2rem;" id="countCompleted">0</div>
+                    <div class="fw-bold text-success" style="font-size:2rem;" id="countCompleted">{{ $countCompleted }}</div>
                 </div>
                 <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                     <i class="fas fa-check-circle text-success"></i>
@@ -37,7 +37,7 @@
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-dark">Total Tasks</div>
-                    <div class="fw-bold" style="font-size:2rem;color:#6F42C1;" id="countTotal">0</div>
+                    <div class="fw-bold" style="font-size:2rem;color:#6F42C1;" id="countTotal">{{ $countTotal }}</div>
                 </div>
                 <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">
                     <i class="fas fa-clipboard-list" style="color: #6F42C1;"></i>
@@ -51,7 +51,7 @@
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-dark"> In Progress</div>
-                    <div class="fw-bold" style="font-size:2rem;color:#0E6EFC;" id="countInProgress">0</div>
+                    <div class="fw-bold" style="font-size:2rem;color:#0E6EFC;" id="countInProgress">{{ $countInProgress }}</div>
                 </div>
                 <div class="stat-icon" style="background: #6e42c116; color: var(--warning);">
                     <i class="fas fa-spinner" style="color: #0E6EFC;"></i>
@@ -65,7 +65,7 @@
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-dark"> OverDue</div>
-                    <div class="fw-bold " style="font-size:2rem;color:#ff8800;" id="countOverdue">0</div>
+                    <div class="fw-bold " style="font-size:2rem;color:#ff8800;" id="countOverdue">{{ $countOverdue }}</div>
                 </div>
                 <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
                     <i class="fa-regular fa-calendar" style="color: #ff8800;"></i>

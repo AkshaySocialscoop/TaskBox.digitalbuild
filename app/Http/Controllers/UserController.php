@@ -69,6 +69,18 @@ class UserController extends Controller
             ->whereDate('created_at', '>=', Carbon::today())
             ->get();
 
+        $countTotal = Task::where('assigned_to', $user->id)->count();
+        $countCompleted = Task::where('assigned_to', $user->id)
+            ->where('status', 'Completed')
+            ->count();
+        $countInProgress = Task::where('assigned_to', $user->id)
+            ->where('status', 'In_Progress')
+            ->count();
+        $countOverdue = Task::where('assigned_to', $user->id)
+            ->whereDate('due_date', '<', Carbon::today())
+            ->where('status', '!=', 'Completed')
+            ->count();
+
         return view('user.dashboard', compact(
             'tasks',
             'projects',
@@ -76,7 +88,11 @@ class UserController extends Controller
             'todayTasks',
             'todayPosts',
             'showCheckInModal',
-            'showWorkflowModal'
+            'showWorkflowModal',
+            'countTotal',
+            'countCompleted',
+            'countInProgress',
+            'countOverdue'
         ));
     }
 
