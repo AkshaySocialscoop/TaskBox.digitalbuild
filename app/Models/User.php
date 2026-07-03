@@ -10,6 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserInfo;
+use App\Models\Company;
 
 class User extends Authenticatable
 {
@@ -32,6 +33,7 @@ class User extends Authenticatable
         'password',
         'role',
         'department_id',
+        'company_id',
     ];
 
     public function isSuperAdmin()
@@ -51,6 +53,11 @@ class User extends Authenticatable
     public function userinfo()
     {
         return $this->hasOne(UserInfo::class, 'user_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
     public function receivedMessages()
 {

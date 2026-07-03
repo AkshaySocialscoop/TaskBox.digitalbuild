@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
+use App\Models\Traits\BelongsToCompany;
 
 class Task extends Model
 
 {
+    use BelongsToCompany;
 
     use HasFactory;
 

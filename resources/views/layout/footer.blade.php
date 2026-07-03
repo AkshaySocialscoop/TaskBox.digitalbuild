@@ -182,9 +182,12 @@
                          </div>
 
                          <!-- Comments -->
-                         <div class="col-md-6">
+                         <div class="col-md-6 position-relative toggle-visibility-wrapper">
                              <label class="form-label fw-semibold">Comments</label>
-                             <textarea name="comments" rows="3" class="form-control"></textarea>
+                             <textarea name="comments" rows="3" class="form-control toggle-visibility-textarea toggle-comment-hidden" id="project_comments"></textarea>
+                             <button type="button" class="btn btn-sm btn-icon toggle-comment-visibility" data-target="project_comments" aria-label="Toggle comments visibility">
+                                 <i class="fas fa-eye-slash"></i>
+                             </button>
                          </div>
 
                          <!-- Submit -->
@@ -200,7 +203,7 @@
      </div>
  </div>
 
- <!-- Project Details Update Modal -->
+ <!-- IT Project Details Update Modal -->
  <div class="modal fade" id="projectDetailsUpdateModal" tabindex="-1">
      <div class="modal-dialog modal-xl modal-dialog-centered">
          <div class="modal-content rounded-4 overflow-hidden">
@@ -258,9 +261,12 @@
                          </div>
 
                          <!-- Comments -->
-                         <div class="col-md-6">
-                             <label class="form-label fw-semibold">Comments</label>
-                             <textarea name="comments" id="edit_comments" rows="3" class="form-control"></textarea>
+                         <div class="col-md-6 position-relative toggle-visibility-wrapper">
+                             <label class="form-label fw-semibold">Notes</label>
+                             <textarea name="comments" id="edit_comments" rows="3" class="form-control toggle-visibility-textarea toggle-comment-hidden"></textarea>
+                             <button type="button" class="btn btn-sm btn-icon toggle-comment-visibility" data-target="edit_comments" aria-label="Toggle comments visibility">
+                                 <i class="fas fa-eye-slash"></i>
+                             </button>
                          </div>
 
                          <!-- Submit -->
@@ -466,6 +472,33 @@
 
 
 
+ <style>
+    .toggle-visibility-wrapper {
+        position: relative;
+    }
+    .toggle-visibility-textarea {
+        padding-right: 3rem;
+    }
+    .toggle-comment-visibility {
+        position: absolute;
+        top: 2rem;
+        right: 0.75rem;
+        z-index: 5;
+        border: none;
+        background: transparent;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0.25rem 0.35rem;
+    }
+    .toggle-comment-visibility:hover {
+        color: #000;
+    }
+    .toggle-comment-hidden {
+        -webkit-text-security: disc;
+        text-security: disc;
+    }
+</style>
+
  <script>
 $(".data-attributes span").peity("donut");
  </script>
@@ -473,6 +506,74 @@ $(".data-attributes span").peity("donut");
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+const commentVisibilityTimeouts = {};
+
+function hideCommentTextarea(targetId, button) {
+    const textarea = document.getElementById(targetId);
+    if (!textarea) return;
+
+    textarea.classList.add('toggle-comment-hidden');
+    if (button) {
+        const icon = button.querySelector('i');
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    }
+}
+
+function initCommentVisibilityToggles() {
+    document.querySelectorAll('.toggle-comment-visibility').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.dataset.target;
+            const textarea = document.getElementById(targetId);
+            if (!textarea) return;
+
+            // Hide all other fields immediately
+            document.querySelectorAll('.toggle-comment-visibility').forEach(otherButton => {
+                const otherTarget = otherButton.dataset.target;
+                if (otherTarget === targetId) return;
+
+                const otherTextarea = document.getElementById(otherTarget);
+                if (!otherTextarea) return;
+
+                otherTextarea.classList.add('toggle-comment-hidden');
+                const otherIcon = otherButton.querySelector('i');
+                if (otherIcon) {
+                    otherIcon.classList.remove('fa-eye');
+                    otherIcon.classList.add('fa-eye-slash');
+                }
+                if (commentVisibilityTimeouts[otherTarget]) {
+                    clearTimeout(commentVisibilityTimeouts[otherTarget]);
+                    delete commentVisibilityTimeouts[otherTarget];
+                }
+            });
+
+            const isNowVisible = textarea.classList.contains('toggle-comment-hidden');
+            textarea.classList.toggle('toggle-comment-hidden', !isNowVisible);
+
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye', isNowVisible);
+                icon.classList.toggle('fa-eye-slash', !isNowVisible);
+            }
+
+            if (commentVisibilityTimeouts[targetId]) {
+                clearTimeout(commentVisibilityTimeouts[targetId]);
+            }
+
+            if (isNowVisible) {
+                commentVisibilityTimeouts[targetId] = setTimeout(() => {
+                    hideCommentTextarea(targetId, button);
+                    delete commentVisibilityTimeouts[targetId];
+                }, 3000);
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initCommentVisibilityToggles);
+
 let currentChatUser = null;
 const AUTH_USER_ID = {{ auth()->id() }};
 

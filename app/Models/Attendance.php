@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToCompany;
 
 class Attendance extends Model
 {
+    use BelongsToCompany;
     protected $fillable = [
     'user_id',
     'shift_id',

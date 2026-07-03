@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Ensure tenant resolver runs for web requests
+        $this->app->make(\Illuminate\Routing\Router::class)
+            ->pushMiddlewareToGroup('web', \App\Http\Middleware\ResolveTenant::class);
+
         View::composer('layout.footer', function ($view) {
 
             if (!Auth::check()) {

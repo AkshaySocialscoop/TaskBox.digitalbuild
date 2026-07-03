@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToCompany;
 
 class ScheduledPost extends Model
 { 
+    use BelongsToCompany;
     protected $guarded = [];
     public function account()
     {

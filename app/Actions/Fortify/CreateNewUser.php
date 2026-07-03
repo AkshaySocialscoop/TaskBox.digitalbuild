@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -29,6 +30,7 @@ class CreateNewUser implements CreatesNewUsers
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
+            'company_id' => (app()->bound('current_company') && app('current_company')) ? app('current_company')->id : Company::first()->id ?? Company::create(['name' => 'Default Company'])->id,
             'password' => Hash::make($input['password']),
         ]);
     }

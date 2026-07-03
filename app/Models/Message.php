@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToCompany;
 
 class Message extends Model
 {
+    use BelongsToCompany;
     protected $fillable = [
         'sender_id',
         'receiver_id',
