@@ -7,23 +7,37 @@ use App\Models\Role;
 
 class RoleController extends Controller
 {
-     // 📄 Show all roles
-    public function index()
+    // 📄 Show all roles
+    public function index(Request $request)
     {
-        $roles = Role::latest()->get();
+        $query = Role::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $roles = $query->latest()->get();
+        
         return view('super-admin.employee-management.add-role.index', compact('roles'));
     }
-    
+
 
     // 💾 Store new role
     public function store(Request $request)
     {
+
+        $user = auth()->user();
+        $company_id = $user->company->id;
+
+        // dd($company_id);
+
         $request->validate([
             'name' => 'required|unique:roles,name|max:255',
         ]);
 
         Role::create([
-            'name' => $request->name
+            'name' => $request->name,
+            'company_id' => $company_id, // Associate role with the user's company
         ]);
 
         return back()->with('success', 'Role created successfully');

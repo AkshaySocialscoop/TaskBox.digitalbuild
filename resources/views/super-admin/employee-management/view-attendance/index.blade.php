@@ -379,7 +379,8 @@ function updateRows(days, year, month) {
             let currentDate = new Date(dateStr);
             currentDate.setHours(0, 0, 0, 0);
 
-            let status = getAttendanceStatus(employeeId, dateStr);
+            let attendance = getAttendanceStatus(employeeId, dateStr);
+            let status = attendance.status;
             let className = '';
 
             // ✅ BEFORE JOINING (created_at)
@@ -417,9 +418,24 @@ function updateRows(days, year, month) {
                 className = `bg-${status}`; // present, halfday, etc.
             }
 
+            const tooltipParts = [];
+            const formattedStatus = status.replace('_', ' ');
+
+            if (['present', 'late', 'half_day'].includes(attendance.status) && attendance.check_in) {
+                tooltipParts.push(`Check In: ${attendance.check_in}`);
+            }
+
+            if (['present', 'late', 'half_day'].includes(attendance.status) && attendance.check_out) {
+                tooltipParts.push(`Check Out: ${attendance.check_out}`);
+            }
+
+            const titleText = tooltipParts.length > 0
+                ? `${formattedStatus} (${tooltipParts.join(' • ')})`
+                : formattedStatus;
+
             // ✅ NO TEXT (only color boxes)
             row.innerHTML += `
-                <td class="${className}" title="${status.replace('_',' ')}"></td>
+                <td class="${className}" title="${titleText}"></td>
             `;
         }
     });
@@ -437,7 +453,11 @@ function getAttendanceStatus(employeeId, date) {
 
     // ❗ If employee has no records at all → Absent
     if (!attendanceData[employeeId]) {
-        return 'absent';
+        return {
+            status: 'absent',
+            check_in: null,
+            check_out: null
+        };
     }
 
     // Find record for this date
@@ -445,10 +465,18 @@ function getAttendanceStatus(employeeId, date) {
 
     // ❗ If no entry for that date → Absent
     if (!record) {
-        return 'absent';
+        return {
+            status: 'absent',
+            check_in: null,
+            check_out: null
+        };
     }
 
-    return record.status.toLowerCase();
+    return {
+        status: record.status.toLowerCase(),
+        check_in: record.check_in || null,
+        check_out: record.check_out || null
+    };
 }
 </script>
 <script>

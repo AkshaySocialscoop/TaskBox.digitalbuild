@@ -8,21 +8,48 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserInfo;
+use App\Models\Company;
+
 
 class UserCreateController extends Controller
 {
-    public function index()
-    {   
-        $users = User::whereIn('role', ['admin', 'user'])->with('department')->latest()->get();
-        $departments = Department::all();
-        return view('super-admin.employee-management.add-employee.index', compact('users', 'departments'));
+
+    public function index(Request $request)
+    {
+        $query = User::with('department')
+            ->whereIn('role', ['admin', 'user']);
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->filled('department')) {
+           $query->where('department_id', $request->department);
+        }
+
+        $users = $query->latest()->get();
+
+        $departments = Department::latest()->get();
+
+        return view(
+            'super-admin.employee-management.add-employee.index',
+            compact('users', 'departments')
+        );
     }
 
     public function userProfile()
-    {   
-       $users = Auth::user()->load('department');
+    {
+        $users = Auth::user()->load('department');
 
-        return view('user-profile.index', compact('users')); 
+        return view('user-profile.index', compact('users'));
     }
 
     public function store(Request $request)
@@ -41,6 +68,7 @@ class UserCreateController extends Controller
             'password' => Hash::make($request->password),
             'role'     => $request->role,
             'department_id'     => $request->department,
+            'company_id' => (app()->bound('current_company') && app('current_company')) ? app('current_company')->id : Company::first()->id ?? Company::create(['name' => 'Default Company'])->id,
         ]);
 
         return redirect()->back()->with('success', 'User created successfully');
@@ -124,5 +152,4 @@ class UserCreateController extends Controller
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
-
 }

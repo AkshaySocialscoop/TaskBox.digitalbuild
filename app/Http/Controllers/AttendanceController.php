@@ -12,12 +12,31 @@ use Carbon\Carbon;
 class AttendanceController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with('user')->latest()->get();
+        $query = Attendance::with('user');
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $attendances = $query->latest()->paginate(20);
+
         $users = User::whereIn('role', ['user', 'admin'])->get();
-        return view('super-admin.employee-management.attendance.index', compact('attendances', 'users'));
-    }  
+
+        return view(
+            'super-admin.employee-management.attendance.index',
+            compact('attendances', 'users')
+        );
+    }
 
     public function update(Request $request, $id)
     {
@@ -30,15 +49,17 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'user_id' => 'required|exists:users,id',
             'date' => 'required|date|before_or_equal:today',
             'check_in' => 'nullable|date_format:H:i:s',
             'check_out' => 'nullable|date_format:H:i:s',
-            'status' => 'required|in:present,absent,late,half_day,paid_leave,week_off'
+            'status' => 'required|in:present,absent,late,half_day,paid_leave,week_off',
         ]);
 
-        Attendance::create($request->only(['user_id', 'date', 'check_in', 'check_out', 'status']));
+        $data['company_id'] = auth()->user()->company_id;
+
+        Attendance::create($data);
 
         return back()->with('success', 'Attendance created successfully');
     }
@@ -58,7 +79,7 @@ class AttendanceController extends Controller
 
             $status = 'present';
 
-            $shift = Shift::find($user->shift_id); 
+            $shift = Shift::find($user->shift_id);
             if ($shift) {
 
                 // current datetime
@@ -73,7 +94,7 @@ class AttendanceController extends Controller
 
                 // ONLY if current time is after shift start
                 if ($now->timestamp > $shiftStart->timestamp) {
-    
+
 
                     // 4 hour late
                     if ($lateMinutes >= 240) {
@@ -104,7 +125,6 @@ class AttendanceController extends Controller
                 'status'  => $status,
                 'late_minutes' => $lateMinutes ?? 0
             ]);
-
         } catch (\Throwable $e) {
 
             return response()->json([
@@ -137,7 +157,6 @@ class AttendanceController extends Controller
             \Log::info('Attendance Found:', ['id' => $attendance->id]);
             \Log::info('Today:', ['today' => now()->toDateString()]);
             return response()->json(['success' => true]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
@@ -163,6 +182,8 @@ class AttendanceController extends Controller
             $attendances[$att->user_id][] = [
                 'formatted_date' => \Carbon\Carbon::parse($att->date)->format('Y-m-d'),
                 'status' => $att->status,
+                'check_in' => $att->check_in ? \Carbon\Carbon::parse($att->check_in)->format('h:i A') : null,
+                'check_out' => $att->check_out ? \Carbon\Carbon::parse($att->check_out)->format('h:i A') : null,
                 'shift_id' => $att->shift_id,
                 'working_hours' => $att->working_hours,
                 'overtime_hours' => $att->overtime_hours,

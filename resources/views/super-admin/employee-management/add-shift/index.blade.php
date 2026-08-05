@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="card">
+<!-- <div class="card">
     <div class="card-body p-4">
         <h5 class="mb-4">Add Shift</h5>
         <form class="row g-3" method="POST" action="{{route('shifts.store')}}">
@@ -39,7 +39,74 @@
             </div>
         </form>
     </div>
+</div> -->
+
+<div class="card py-3 px-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Shifts</h5>
+
+        <button type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addShiftModal">
+            Add Shift
+        </button>
+    </div>
+
+    <hr class="mt-3">
+
+    <div class="mt-2">
+
+        <form method="GET" action="{{ route('shifts.index') }}">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label">Shift Name</label>
+                    <input type="text"
+                        class="form-control"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search Shift">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Check In</label>
+                    <input type="time"
+                        class="form-control"
+                        name="start_time"
+                        value="{{ request('start_time') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Check Out</label>
+                    <input type="time"
+                        class="form-control"
+                        name="end_time"
+                        value="{{ request('end_time') }}">
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button class="btn btn-primary">
+                        Search
+                    </button>
+
+                    <button type="button"
+                        class="btn btn-secondary "
+                        onclick="window.location.href='{{ route('shifts.index') }}'">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
 </div>
+
+
 
 <!-- Employee List -->
 <div class="card">
@@ -125,6 +192,96 @@
                 </div>
 
             </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addShiftModal" tabindex="-1" aria-labelledby="addShiftModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addShiftModalLabel">
+                    Add Shift
+                </h5>
+
+                <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"></button>
+            </div>
+
+            <form method="POST" action="{{ route('shifts.store') }}">
+                @csrf
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label class="form-label">Shift Name</label>
+
+                            <div class="position-relative input-icon">
+                                <input type="text"
+                                    class="form-control"
+                                    name="name"
+                                    placeholder="Shift Name"
+                                    required>
+
+                                <span class="position-absolute top-50 translate-middle-y">
+                                    <i class="material-icons-outlined fs-5">badge</i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Check In</label>
+
+                            <div class="position-relative input-icon">
+                                <input type="time"
+                                    class="form-control"
+                                    name="start_time"
+                                    required>
+
+                                <span class="position-absolute top-50 translate-middle-y">
+                                    <i class="material-icons-outlined fs-5">access_time</i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Check Out</label>
+
+                            <div class="position-relative input-icon">
+                                <input type="time"
+                                    class="form-control"
+                                    name="end_time"
+                                    required>
+
+                                <span class="position-absolute top-50 translate-middle-y">
+                                    <i class="material-icons-outlined fs-5">schedule</i>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Add Shift
+                    </button>
+                </div>
+
+            </form>
+
         </div>
     </div>
 </div>

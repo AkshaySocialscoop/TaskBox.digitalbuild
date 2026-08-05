@@ -7,20 +7,31 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
-     public function index()
+    public function index(Request $request)
     {
-        $departments = Department::latest()->get();
+        $query = Department::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $departments = $query->latest()->get();
+
         return view('super-admin.employee-management.add-department.index', compact('departments'));
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $company_id = $user->company->id;
+
         $request->validate([
             'name' => 'required|unique:departments,name|max:255',
         ]);
 
         Department::create([
-            'name' => $request->name
+            'name' => $request->name,
+            'company_id' => $company_id,
         ]);
 
         return back()->with('success', 'Department created successfully');
