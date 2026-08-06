@@ -32,7 +32,7 @@ class UserCreateController extends Controller
         }
 
         if ($request->filled('department')) {
-           $query->where('department_id', $request->department);
+            $query->where('department_id', $request->department);
         }
 
         $users = $query->latest()->get();
@@ -55,21 +55,37 @@ class UserCreateController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'role'     => 'required|in:admin,user',
+            'name'       => 'required',
+            'email'      => 'required|email|unique:users',
+            'password'   => 'required|min:6',
+            'role'       => 'required|in:admin,user',
             'department' => 'required',
         ]);
 
-        User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-            'department_id'     => $request->department,
-            'company_id' => (app()->bound('current_company') && app('current_company')) ? app('current_company')->id : Company::first()->id ?? Company::create(['name' => 'Default Company'])->id,
+        $user = User::create([
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'role'          => $request->role,
+            'department_id' => $request->department,
+            'company_id'    => (app()->bound('current_company') && app('current_company'))
+                ? app('current_company')->id
+                : Company::first()->id ?? Company::create(['name' => 'Default Company'])->id,
         ]);
+
+        audit_log(
+            'Employee',
+            'Create',
+            'Employee Created',
+            $user->id,
+            null,
+            "Employee '{$user->name}' created.",
+            null,
+            json_encode($user->toArray()),
+            $user->id
+        );
+
+
 
         return redirect()->back()->with('success', 'User created successfully');
     }
@@ -79,18 +95,20 @@ class UserCreateController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name'  => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role'  => 'required|in:admin,user',
+            'name'       => 'required',
+            'email'      => 'required|email|unique:users,email,' . $user->id,
+            'role'       => 'required|in:admin,user',
             'department' => 'required',
-            'password' => 'nullable|min:6'
+            'password'   => 'nullable|min:6'
         ]);
 
+        $oldData = $user->toArray();
+
         $data = [
-            'name'  => $request->name,
-            'email' => $request->email,
-            'role'  => $request->role,
-            'department_id'  => $request->department,
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'role'          => $request->role,
+            'department_id' => $request->department,
         ];
 
         if ($request->filled('password')) {
@@ -99,6 +117,18 @@ class UserCreateController extends Controller
 
         $user->update($data);
 
+        audit_log(
+            'Employee',
+            'Update',
+            'Employee Updated',
+            $user->id,
+            null,
+            "Employee '{$user->name}' updated.",
+            json_encode($oldData),
+            json_encode($user->fresh()->toArray()),
+            $user->id
+        );
+
         return redirect()->back()->with('success', 'User updated successfully!');
     }
 
@@ -106,10 +136,23 @@ class UserCreateController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Safety: prevent deleting super admin
         if ($user->role === 'super_admin') {
             return redirect()->back()->with('error', 'Super Admin cannot be deleted!');
         }
+
+        $oldData = $user->toArray();
+
+        audit_log(
+            'Employee',
+            'Delete',
+            'Employee Deleted',
+            $user->id,
+            null,
+            "Employee '{$user->name}' deleted.",
+            json_encode($oldData),
+            null,
+            $user->id
+        );
 
         $user->delete();
 

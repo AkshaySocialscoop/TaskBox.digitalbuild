@@ -15,6 +15,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\LeaveRequestController;
 
 Route::get('/', function () {
@@ -147,6 +148,9 @@ Route::middleware(['auth','role:super_admin'])->group(function () {
     Route::post('/super-admin/leave-requests/{id}/approve', [LeaveRequestController::class, 'approve'])->name('super-admin.leave.approve');
     Route::post('/super-admin/leave-requests/{id}/reject', [LeaveRequestController::class, 'reject'])->name('super-admin.leave.reject');
 
+    // audit log route
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
@@ -158,6 +162,6 @@ Route::middleware(['auth','role:admin'])->group(function () {
 
 Route::middleware(['auth','role:user'])->group(function () {
     // Dashboard Route
-    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');;
+    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 
 });

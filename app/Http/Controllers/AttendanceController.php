@@ -42,7 +42,20 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        $oldData = $attendance->toArray();
+
         $attendance->update($request->all());
+
+        audit_log(
+            'Attendance',
+            'Update',
+            'Attendance Updated',
+            $attendance->id,
+            null,
+            "Attendance updated for {$attendance->user->name} on {$attendance->date}.",
+            json_encode($oldData),
+            json_encode($attendance->fresh()->toArray())
+        );
 
         return back()->with('success', 'Updated');
     }
@@ -59,14 +72,40 @@ class AttendanceController extends Controller
 
         $data['company_id'] = auth()->user()->company_id;
 
-        Attendance::create($data);
+        $attendance = Attendance::create($data);
+
+        audit_log(
+            'Attendance',
+            'Create',
+            'Attendance Created',
+            $attendance->id,
+            null,
+            "Attendance created for {$attendance->user->name} on {$attendance->date}.",
+            null,
+            json_encode($attendance->toArray())
+        );
 
         return back()->with('success', 'Attendance created successfully');
     }
 
     public function destroy($id)
     {
-        Attendance::findOrFail($id)->delete();
+        $attendance = Attendance::findOrFail($id);
+
+        $oldData = $attendance->toArray();
+
+        audit_log(
+            'Attendance',
+            'Delete',
+            'Attendance Deleted',
+            $attendance->id,
+            null,
+            "Attendance deleted for {$attendance->user->name} on {$attendance->date}.",
+            json_encode($oldData),
+            null
+        );
+
+        $attendance->delete();
 
         return back()->with('success', 'Deleted');
     }
@@ -163,6 +202,7 @@ class AttendanceController extends Controller
             ], 500);
         }
     }
+
     public function viewAttendance(Request $request)
     {
         $year = $request->year ?? now()->year;

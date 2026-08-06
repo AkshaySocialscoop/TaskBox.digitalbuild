@@ -4,58 +4,67 @@
 
 @section('content')
 
-<div class="card py-3 px-3">
-    <div class="d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Roles</h5>
 
-        <button type="button"
-            class="btn btn-sm btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addRoleModal">
-            Add Role
-        </button>
-    </div>
 
-    <hr class="mt-3">
+<div class="mt-2 card py-3 px-3" id="filterSection" style="display:none;">
 
-    <div class="mt-2">
+    <form method="GET" action="{{ route('roles.index') }}">
 
-        <form method="GET" action="{{ route('roles.index') }}">
+        <div class="row g-3 align-items-end">
 
-            <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Role Name</label>
 
-                <div class="col-md-3">
-                    <label class="form-label">Role Name</label>
-
-                    <input type="text"
-                        class="form-control"
-                        name="search"
-                        placeholder="Search Role"
-                        value="{{ request('search') }}">
-                </div>
-
-                <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        Search
-                    </button>
-                    <button type="button"
-                        class="btn btn-secondary "
-                        onclick="window.location.href='{{ route('roles.index') }}'">
-                        Reset
-                    </button>
-                </div>
-
+                <input type="text"
+                    class="form-control"
+                    name="search"
+                    placeholder="Search Role"
+                    value="{{ request('search') }}">
             </div>
 
-        </form>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+                <button type="button"
+                    class="btn btn-secondary "
+                    onclick="window.location.href='{{ route('roles.index') }}'">
+                    Reset
+                </button>
+            </div>
 
-    </div>
+        </div>
+
+    </form>
+
 </div>
 
 <!-- Employee List -->
 <div class="card">
     <div class="card-body">
-        <h5 class="mb-4">Roles List</h5>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h5 class="mb-0">Roles List</h5>
+
+            <div class="d-flex gap-2">
+
+                <x-filter-button target="filterSection" />
+
+                <button type="button"
+                    class="btn btn-sm btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addRoleModal">
+                    Add Role
+                </button>
+
+            </div>
+
+        </div>
+
+        <h5 class="mb-4"></h5>
+
+
         <div class="table-responsive">
             <table id="example" class="table table-striped table-bordered" style="width:100%">
                 <thead>

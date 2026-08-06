@@ -45,16 +45,10 @@
 <!-- Attendance List -->
 <div class="card">
   <div class="card-body">
-    <div class="d-flex justify-content-between align-items-center">
-      <h5>Attendance List</h5>
-      <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAttendanceModal">Add Attendance</button>
-    </div>
+    
 
-
-    <hr class="mt-3">
-
-    <div class="">
-      <div class="mb-4 mt-2" >
+    <div class="" id="filterSection" style="display:none;">
+      <div class="mb-4 mt-2">
 
         <form method="GET" action="{{ route('attendance.index') }}">
 
@@ -106,7 +100,7 @@
               <button class="btn  btn-primary">
                 Search
               </button>
-              
+
               <button type="button"
                 class="btn btn-secondary "
                 onclick="window.location.href='{{ route('attendance.index') }}'">
@@ -121,93 +115,111 @@
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table id="example" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>User</th>
-            <th>Date</th>
-            <th>Check In</th>
-            <th>Check Out</th>
-            <th>Working Hours</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
 
-        <tbody>
-          @forelse($attendances as $attendance)
-          <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $attendance->user->name }}</td>
-            <td>{{ $attendance->date }}</td>
-            <td>{{ $attendance->check_in }}</td>
-            <td> {{ $attendance->check_out }}</td>
-            <td>
-              @if($attendance->check_in && $attendance->check_out)
-              @php
-              $checkIn = \Carbon\Carbon::parse($attendance->check_in);
-              $checkOut = \Carbon\Carbon::parse($attendance->check_out);
-              $workingHours = $checkOut->diff($checkIn)->format('%H:%I:%S');
-              @endphp
-              {{ $workingHours }}
-              @else
-              N/A
-              @endif
-            </td>
-            <td>
-              @php
-              $statusClass = match($attendance->status) {
-              'present' => 'bg-present',
-              'absent' => 'bg-absent',
-              'late' => 'bg-late',
-              'half_day' => 'bg-halfday',
-              'paid_leave' => 'bg-paid_leave',
-              'week_off' => 'bg-weekly_off',
-              };
-              @endphp
+    <div class="card">
 
-              <span class="badge {{ $statusClass }}">
-                {{ ucwords(str_replace('_', ' ', $attendance->status)) }}
-              </span>
-            </td>
-            <td>
-              <a href="javascript:;"
-                class="btn btn-sm text-warning editAttendanceBtn"
-                data-id="{{ $attendance->id }}"
-                data-name="{{ $attendance->user->name }}"
-                data-date="{{ $attendance->date }}"
-                data-check-in="{{ $attendance->check_in }}"
-                data-check-out="{{ $attendance->check_out }}"
-                data-status="{{ $attendance->status }}">
-                <i class="lni lni-pencil-alt fs-6"></i>
-              </a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-              <form action="{{ route('attendance.destroy', $attendance->id) }}"
-                method="POST"
-                class="d-inline delete-form">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                  class="btn btn-sm text-danger"> <i class="lni lni-trash fs-6 "></i>
-                </button>
-              </form>
-            </td>
-          </tr>
-          @empty
-          <tr>
-            <td colspan="5" class="text-center">No Attendance found</td>
-          </tr>
-          @endforelse
-        </tbody>
-      </table>
+          <h5 class="mb-0">Attendance List</h5>
+
+          <div class="d-flex gap-2">
+            <x-filter-button target="filterSection" />
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAttendanceModal">Add Attendance</button>
+          </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+
+          <table id="example" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Date</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Working Hours</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @forelse($attendances as $attendance)
+              <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $attendance->user->name }}</td>
+                <td>{{ $attendance->date }}</td>
+                <td>{{ $attendance->check_in }}</td>
+                <td> {{ $attendance->check_out }}</td>
+                <td>
+                  @if($attendance->check_in && $attendance->check_out)
+                  @php
+                  $checkIn = \Carbon\Carbon::parse($attendance->check_in);
+                  $checkOut = \Carbon\Carbon::parse($attendance->check_out);
+                  $workingHours = $checkOut->diff($checkIn)->format('%H:%I:%S');
+                  @endphp
+                  {{ $workingHours }}
+                  @else
+                  N/A
+                  @endif
+                </td>
+                <td>
+                  @php
+                  $statusClass = match($attendance->status) {
+                  'present' => 'bg-present',
+                  'absent' => 'bg-absent',
+                  'late' => 'bg-late',
+                  'half_day' => 'bg-halfday',
+                  'paid_leave' => 'bg-paid_leave',
+                  'week_off' => 'bg-weekly_off',
+                  };
+                  @endphp
+
+                  <span class="badge {{ $statusClass }}">
+                    {{ ucwords(str_replace('_', ' ', $attendance->status)) }}
+                  </span>
+                </td>
+                <td>
+                  <a href="javascript:;"
+                    class="btn btn-sm text-warning editAttendanceBtn"
+                    data-id="{{ $attendance->id }}"
+                    data-name="{{ $attendance->user->name }}"
+                    data-date="{{ $attendance->date }}"
+                    data-check-in="{{ $attendance->check_in }}"
+                    data-check-out="{{ $attendance->check_out }}"
+                    data-status="{{ $attendance->status }}">
+                    <i class="lni lni-pencil-alt fs-6"></i>
+                  </a>
+
+                  <form action="{{ route('attendance.destroy', $attendance->id) }}"
+                    method="POST"
+                    class="d-inline delete-form">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                      class="btn btn-sm text-danger"> <i class="lni lni-trash fs-6 "></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              @empty
+              <tr>
+                <td colspan="5" class="text-center">No Attendance found</td>
+              </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+
     </div>
 
     <!-- // Pagination -->
     <div class="mt-3">
       {{ $attendances->withQueryString()->links() }}
-    </div>   
+    </div>
 
   </div>
 </div>

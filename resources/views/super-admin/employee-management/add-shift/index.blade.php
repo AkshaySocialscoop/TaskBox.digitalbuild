@@ -3,115 +3,84 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<!-- <div class="card">
-    <div class="card-body p-4">
-        <h5 class="mb-4">Add Shift</h5>
-        <form class="row g-3" method="POST" action="{{route('shifts.store')}}">
-            @csrf
-            <div class="col-md-2">
-                <label for="input13" class="form-label">Shift Name</label>
-                <div class="position-relative input-icon">
-                    <input type="text" class="form-control" id="input13" placeholder="Shift Name" name="name" required>
-                    <span class="position-absolute top-50 translate-middle-y"><i
-                            class="material-icons-outlined fs-5">person_outline</i></span>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <label for="input14" class="form-label">Check IN</label>
-                <div class="position-relative input-icon">
-                    <input type="time" class="form-control" id="input14" name="start_time" required>
-                    <span class="position-absolute top-50 translate-middle-y"><i
-                            class="material-icons-outlined fs-5">access_time</i></span>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <label for="input15" class="form-label">Check OUT</label>
-                <div class="position-relative input-icon">
-                    <input type="time" class="form-control" id="input15" name="end_time" required>
-                    <span class="position-absolute top-50 translate-middle-y"><i
-                            class="material-icons-outlined fs-5">access_time</i></span>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="d-md-flex d-grid align-items-center gap-3 mt-4">
-                    <button type="submit" class="btn btn-primary px-4 mt-1">Add</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div> -->
 
-<div class="card py-3 px-3 mb-3">
-    <div class="d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Shifts</h5>
 
-        <button type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addShiftModal">
-            Add Shift
-        </button>
-    </div>
 
-    <hr class="mt-3">
 
-    <div class="mt-2">
+<div class="mt-2 card py-3 px-3" id="filterSection" style="display:none;">
 
-        <form method="GET" action="{{ route('shifts.index') }}">
+    <form method="GET" action="{{ route('shifts.index') }}">
 
-            <div class="row g-3 align-items-end">
+        <div class="row g-3 align-items-end">
 
-                <div class="col-md-4">
-                    <label class="form-label">Shift Name</label>
-                    <input type="text"
-                        class="form-control"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search Shift">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Check In</label>
-                    <input type="time"
-                        class="form-control"
-                        name="start_time"
-                        value="{{ request('start_time') }}">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Check Out</label>
-                    <input type="time"
-                        class="form-control"
-                        name="end_time"
-                        value="{{ request('end_time') }}">
-                </div>
-
-                <div class="col-md-2 d-flex gap-2">
-                    <button class="btn btn-primary">
-                        Search
-                    </button>
-
-                    <button type="button"
-                        class="btn btn-secondary "
-                        onclick="window.location.href='{{ route('shifts.index') }}'">
-                        Reset
-                    </button>
-                </div>
-
+            <div class="col-md-4">
+                <label class="form-label">Shift Name</label>
+                <input type="text"
+                    class="form-control"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Search Shift">
             </div>
 
-        </form>
+            <div class="col-md-3">
+                <label class="form-label">Check In</label>
+                <input type="time"
+                    class="form-control"
+                    name="start_time"
+                    value="{{ request('start_time') }}">
+            </div>
 
-    </div>
+            <div class="col-md-3">
+                <label class="form-label">Check Out</label>
+                <input type="time"
+                    class="form-control"
+                    name="end_time"
+                    value="{{ request('end_time') }}">
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary">
+                    Search
+                </button>
+
+                <button type="button"
+                    class="btn btn-secondary "
+                    onclick="window.location.href='{{ route('shifts.index') }}'">
+                    Reset
+                </button>
+            </div>
+
+        </div>
+
+    </form>
 
 </div>
 
 
 
-<!-- Employee List -->
+
+
 <div class="card">
     <div class="card-body">
-        <h5 class="mb-4">Roles List</h5>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h5 class="mb-0">Shift List</h5>
+            <div class="d-flex gap-2">
+
+                <x-filter-button target="filterSection" />
+
+                <button type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addShiftModal">
+                    Add Shift
+                </button>
+
+            </div>
+
+        </div>
+
         <div class="table-responsive">
             <table id="example" class="table table-striped table-bordered" style="width:100%">
                 <thead>
@@ -158,6 +127,7 @@
         </div>
     </div>
 </div>
+
 <!-- Edit User Modal -->
 <div class="modal fade" id="editShiftModal" tabindex="-1">
     <div class="modal-dialog">

@@ -5,10 +5,10 @@
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h3>Welcome, {{ Auth::user()->name }}!</h3>
+    <h3>Welcome, {{ Auth::user()->name }}!</h3> 
     <div class="d-flex gap-2"> 
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#workflowModal">
-            Yaer
+            Year
         </button> 
          
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#workflowModal">

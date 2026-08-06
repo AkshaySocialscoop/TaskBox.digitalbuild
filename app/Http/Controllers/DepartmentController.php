@@ -29,10 +29,21 @@ class DepartmentController extends Controller
             'name' => 'required|unique:departments,name|max:255',
         ]);
 
-        Department::create([
+        $department = Department::create([
             'name' => $request->name,
             'company_id' => $company_id,
         ]);
+
+        audit_log(
+            'Department',
+            'Create',
+            'Department Created',
+            $department->id,
+            null,
+            "Department '{$department->name}' created.",
+            null,
+            json_encode($department->toArray())
+        );
 
         return back()->with('success', 'Department created successfully');
     }
@@ -45,9 +56,22 @@ class DepartmentController extends Controller
             'name' => 'required|max:255|unique:departments,name,' . $id,
         ]);
 
+        $oldData = $department->toArray();
+
         $department->update([
             'name' => $request->name
         ]);
+
+        audit_log(
+            'Department',
+            'Update',
+            'Department Updated',
+            $department->id,
+            'name',
+            "Department '{$department->name}' updated.",
+            json_encode($oldData),
+            json_encode($department->fresh()->toArray())
+        );
 
         return back()->with('success', 'Department updated successfully');
     }
@@ -55,8 +79,22 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         $department = Department::findOrFail($id);
+
+        $oldData = $department->toArray();
+
+        audit_log(
+            'Department',
+            'Delete',
+            'Department Deleted',
+            $department->id,
+            null,
+            "Department '{$department->name}' deleted.",
+            json_encode($oldData),
+            null
+        );
+
         $department->delete();
 
-        return back()->with('success', 'Department deleted ');
+        return back()->with('success', 'Department deleted successfully');
     }
 }
