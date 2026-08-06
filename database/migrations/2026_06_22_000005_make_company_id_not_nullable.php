@@ -14,22 +14,25 @@ return new class extends Migration
         $tables = ['users', 'departments', 'roles', 'shifts', 'attendances', 'leave_requests', 'tasks', 'notes', 'projects', 'calendar_events', 'media', 'social_accounts', 'scheduled_posts', 'messages', 'notifications', 'user_infos'];
 
         foreach ($tables as $table) {
-            if (Schema::hasTable($table) && Schema::hasColumn($table, 'company_id')) {
-                Schema::table($table, function (Blueprint $t) use ($table) {
-                    // drop fk if exists
-                    try {
-                        $t->dropForeign(['company_id']);
-                    } catch (\Throwable $e) {
-                        // ignore
-                    }
 
-                    // If the column is nullable, change it to not nullable
-                    $t->unsignedBigInteger('company_id')->nullable(false)->change();
-
-                    // add FK with cascade on delete
-                    $t->foreign('company_id')->references('id')->on('companies')->cascadeOnDelete();
-                });
+            if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'company_id')) {
+                continue;
             }
+
+            Schema::table($table, function (Blueprint $table) {
+
+                try {
+                    $table->dropForeign(['company_id']);
+                } catch (\Throwable $e) {
+                }
+
+                $table->unsignedBigInteger('company_id')->nullable(false)->change();
+
+                $table->foreign('company_id')
+                    ->references('id')
+                    ->on('companies')
+                    ->cascadeOnDelete();
+            });
         }
     }
 
