@@ -34,19 +34,7 @@ return new class extends Migration
             }
 
             Schema::table($table, function (Blueprint $table) {
-
-                try {
-                    $table->dropForeign(['company_id']);
-                } catch (\Throwable $e) {
-                    // Foreign key may not exist
-                }
-
                 $table->unsignedBigInteger('company_id')->nullable(false)->change();
-
-                $table->foreign('company_id')
-                    ->references('id')
-                    ->on('companies')
-                    ->cascadeOnDelete();
             });
         }
     }
@@ -60,19 +48,7 @@ return new class extends Migration
             }
 
             Schema::table($table, function (Blueprint $table) {
-
-                try {
-                    $table->dropForeign(['company_id']);
-                } catch (\Throwable $e) {
-                    // Foreign key may not exist
-                }
-
                 $table->unsignedBigInteger('company_id')->nullable()->change();
-
-                $table->foreign('company_id')
-                    ->references('id')
-                    ->on('companies')
-                    ->nullOnDelete();
             });
         }
     }
