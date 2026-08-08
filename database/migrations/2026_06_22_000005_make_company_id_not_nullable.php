@@ -6,50 +6,52 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected array $tables = [
-        'users',
-        'departments',
-        'roles',
-        'shifts',
-        'attendances',
-        'leave_requests',
-        'tasks',
-        'notes',
-        'projects',
-        'calendar_events',
-        'media',
-        'social_accounts',
-        'scheduled_posts',
-        'messages',
-        'notifications',
-        'user_infos',
-    ];
-
     public function up(): void
     {
-        foreach ($this->tables as $table) {
+        // Note: This migration uses change() which requires doctrine/dbal.
+        // If you see an error, run: composer require doctrine/dbal
+
+        $tables = ['users', 'departments', 'roles', 'shifts', 'attendances', 'leave_requests', 'tasks', 'notes', 'projects', 'calendar_events', 'media', 'social_accounts', 'scheduled_posts', 'messages', 'notifications', 'user_infos'];
+
+        foreach ($tables as $table) {
 
             if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'company_id')) {
                 continue;
             }
 
             Schema::table($table, function (Blueprint $table) {
+
+                try {
+                    $table->dropForeign(['company_id']);
+                } catch (\Throwable $e) {
+                }
+
                 $table->unsignedBigInteger('company_id')->nullable(false)->change();
+
+                $table->foreign('company_id')
+                    ->references('id')
+                    ->on('companies')
+                    ->cascadeOnDelete();
             });
         }
     }
 
     public function down(): void
     {
-        foreach ($this->tables as $table) {
+        $tables = ['users', 'departments', 'roles', 'shifts', 'attendances', 'leave_requests', 'tasks', 'notes', 'projects', 'calendar_events', 'media', 'social_accounts', 'scheduled_posts', 'messages', 'notifications', 'user_infos'];
 
-            if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'company_id')) {
-                continue;
+        foreach ($tables as $table) {
+            if (Schema::hasTable($table) && Schema::hasColumn($table, 'company_id')) {
+                Schema::table($table, function (Blueprint $t) {
+                    // drop FK and make column nullable
+                    try {
+                        $t->dropForeign(['company_id']);
+                    } catch (\Throwable $e) {
+                        // ignore
+                    }
+                    $t->unsignedBigInteger('company_id')->nullable()->change();
+                });
             }
-
-            Schema::table($table, function (Blueprint $table) {
-                $table->unsignedBigInteger('company_id')->nullable()->change();
-            });
         }
     }
 };

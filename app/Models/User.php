@@ -27,7 +27,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
@@ -46,10 +46,10 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-     public function department()
+    public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
-    } 
+    }
     public function userinfo()
     {
         return $this->hasOne(UserInfo::class, 'user_id');
@@ -60,9 +60,9 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
     public function receivedMessages()
-{
-    return $this->hasMany(Message::class, 'sender_id');
-}
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 
 
     /**
@@ -107,8 +107,8 @@ class User extends Authenticatable
     public function createdTasks()
     {
         return $this->hasMany(Task::class, 'assigned_by');
-    }  
-    
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -121,5 +121,10 @@ class User extends Authenticatable
     public function shift()
     {
         return $this->belongsTo(Shift::class);
+    }
+
+    public function googleAccount()
+    {
+        return $this->hasOne(GoogleAccount::class);
     }
 }
