@@ -104,6 +104,8 @@ class UserCreateController extends Controller
 
         $oldData = $user->toArray();
 
+       
+
         $data = [
             'name'          => $request->name,
             'email'         => $request->email,
@@ -117,7 +119,9 @@ class UserCreateController extends Controller
 
         $user->update($data);
 
-        audit_log(
+        // dd($data, $user);
+
+       $audit_log = audit_log(
             'Employee',
             'Update',
             'Employee Updated',
@@ -128,6 +132,8 @@ class UserCreateController extends Controller
             json_encode($user->fresh()->toArray()),
             $user->id
         );
+
+        // dd($audit_log);
 
         return redirect()->back()->with('success', 'User updated successfully!');
     }
