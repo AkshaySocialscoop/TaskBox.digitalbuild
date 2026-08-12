@@ -6,50 +6,54 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected array $tables = [
-        'users',
-        'departments',
-        'roles',
-        'shifts',
-        'attendances',
-        'leave_requests',
-        'tasks',
-        'notes',
-        'projects',
-        'calendar_events',
-        'media',
-        'social_accounts',
-        'scheduled_posts',
-        'messages',
-        'notifications',
-        'user_infos',
-    ];
-
     public function up(): void
     {
-        foreach ($this->tables as $table) {
+        $tables = [
+            'users',
+            'departments',
+            'roles',
+            'shifts',
+            'attendances',
+            'leave_requests',
+            'tasks',
+            'notes',
+            'projects',
+            'calendar_events',
+            'media',
+            'social_accounts',
+            'scheduled_posts',
+            'messages',
+            'notifications',
+            'user_infos',
+        ];
 
-            if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'company_id')) {
+        foreach ($tables as $tableName) {
+
+            if (!Schema::hasTable($tableName)) {
                 continue;
             }
 
-            Schema::table($table, function (Blueprint $table) {
-                $table->unsignedBigInteger('company_id')->nullable(false)->change();
+            if (!Schema::hasColumn($tableName, 'company_id')) {
+                continue;
+            }
+
+            // First remove the foreign key
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->dropForeign(['company_id']);
+            });
+
+            // Then make company_id optional
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->unsignedBigInteger('company_id')
+                    ->nullable()
+                    ->change();
             });
         }
     }
 
     public function down(): void
     {
-        foreach ($this->tables as $table) {
-
-            if (!Schema::hasTable($table) || !Schema::hasColumn($table, 'company_id')) {
-                continue;
-            }
-
-            Schema::table($table, function (Blueprint $table) {
-                $table->unsignedBigInteger('company_id')->nullable()->change();
-            });
-        }
+        // No foreign key is restored.
+        // company_id remains optional.
     }
 };

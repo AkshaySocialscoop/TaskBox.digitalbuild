@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard')
 
-@section('content') 
+@section('content')
 <!--breadcrumb-->
 <div class="row mb-4">
     <div class="col-md-9">
@@ -107,60 +107,60 @@
 
                             @forelse($projects ?? [] as $project)
 
-                                @php
-                                    $statusProgress = [
-                                        'pending' => 30,
-                                        'in_progress' => 70,
-                                        'completed' => 100,
-                                    ];
+                            @php
+                            $statusProgress = [
+                            'pending' => 30,
+                            'in_progress' => 70,
+                            'completed' => 100,
+                            ];
 
-                                    $statusColor = [
-                                        'pending' => 'bg-warning',
-                                        'in_progress' => 'bg-primary',
-                                        'completed' => 'bg-success',
-                                    ];
+                            $statusColor = [
+                            'pending' => 'bg-warning',
+                            'in_progress' => 'bg-primary',
+                            'completed' => 'bg-success',
+                            ];
 
-                                    $progress = $statusProgress[$project->status ?? 'pending'] ?? 0;
-                                    $color = $statusColor[$project->status ?? 'pending'] ?? 'bg-secondary';
-                                @endphp
+                            $progress = $statusProgress[$project->status ?? 'pending'] ?? 0;
+                            $color = $statusColor[$project->status ?? 'pending'] ?? 'bg-secondary';
+                            @endphp
 
-                                <div class="d-flex align-items-center gap-4">
+                            <div class="d-flex align-items-center gap-4">
 
-                                    <div class="d-flex align-items-center gap-3 flex-grow-1 flex-shrink-0">
+                                <div class="d-flex align-items-center gap-3 flex-grow-1 flex-shrink-0">
 
-                                        <div class="wh-48 d-flex align-items-center justify-content-center rounded-3 border p-icon pi-indigo">
-                                            {{ strtoupper(substr($project->brand_name ?? '',0,2)) }}
-                                        </div>
-
-                                        <div>
-                                            <h6 class="mb-0 fw-bold">
-                                                {{ $project->brand_name ?? 'N/A' }}
-                                            </h6>
-
-                                            <p class="mb-0">
-                                                {{ $project->format ?? 'N/A' }}
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="progress w-25" style="height:5px;">
-                                        <div class="progress-bar {{ $color }}"
-                                             style="width:{{ $progress }}%">
-                                        </div>
+                                    <div class="wh-48 d-flex align-items-center justify-content-center rounded-3 border p-icon pi-indigo">
+                                        {{ strtoupper(substr($project->brand_name ?? '',0,2)) }}
                                     </div>
 
                                     <div>
-                                        <p class="mb-0 fs-6">{{ $progress }}%</p>
+                                        <h6 class="mb-0 fw-bold">
+                                            {{ $project->brand_name ?? 'N/A' }}
+                                        </h6>
+
+                                        <p class="mb-0">
+                                            {{ $project->format ?? 'N/A' }}
+                                        </p>
                                     </div>
 
                                 </div>
 
+                                <div class="progress w-25" style="height:5px;">
+                                    <div class="progress-bar {{ $color }}"
+                                        style="width:{{ $progress }}%">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p class="mb-0 fs-6">{{ $progress }}%</p>
+                                </div>
+
+                            </div>
+
                             @empty
 
-                                <div class="text-muted text-center py-3">
-                                    No Projects Found
-                                </div>
+                            <div class="text-muted text-center py-3">
+                                No Projects Found
+                            </div>
 
                             @endforelse
 
@@ -186,39 +186,39 @@
 
                                 @forelse($posts ?? [] as $post)
 
-                                    <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-3">
 
-                                        <div class="wh-48 d-flex align-items-center justify-content-center bg-danger rounded-circle p-icon pi-indigo">
-                                            {{ strtoupper(substr($post->brand_name ?? '',0,2)) }}
-                                        </div>
+                                    <div class="wh-48 d-flex align-items-center justify-content-center bg-danger rounded-circle p-icon pi-indigo">
+                                        {{ strtoupper(substr($post->brand_name ?? '',0,2)) }}
+                                    </div>
 
-                                        <div class="flex-grow-1">
+                                    <div class="flex-grow-1">
 
-                                            <h6 class="mb-0 fw-bold">
-                                                {{ $post->brand_name ?? 'N/A' }}
-                                            </h6>
+                                        <h6 class="mb-0 fw-bold">
+                                            {{ $post->brand_name ?? 'N/A' }}
+                                        </h6>
 
-                                            <p class="mb-0">
-                                                {{ $post->post_type ?? 'N/A' }}
-                                            </p>
-
-                                        </div>
-
-                                        <div class="d-flex align-items-center">
-
-                                            <h6 class="mb-0 fw-bold">
-                                                {{ $post->created_at?->format('d M , h:i A') ?? 'N/A' }}
-                                            </h6>
-
-                                        </div>
+                                        <p class="mb-0">
+                                            {{ $post->post_type ?? 'N/A' }}
+                                        </p>
 
                                     </div>
+
+                                    <div class="d-flex align-items-center">
+
+                                        <h6 class="mb-0 fw-bold">
+                                            {{ $post->created_at?->format('d M , h:i A') ?? 'N/A' }}
+                                        </h6>
+
+                                    </div>
+
+                                </div>
 
                                 @empty
 
-                                    <div class="text-muted text-center py-3">
-                                        No Pending Posts
-                                    </div>
+                                <div class="text-muted text-center py-3">
+                                    No Pending Posts
+                                </div>
 
                                 @endforelse
 
