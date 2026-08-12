@@ -7,6 +7,7 @@
 <div class="row mb-4">
     <div class="col-md-9">
         <h3>Welcome, {{ Auth::user()->name ?? 'User' }} !</h3>
+       
     </div>
 </div>
 <!--end breadcrumb-->

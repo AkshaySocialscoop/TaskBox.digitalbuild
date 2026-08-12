@@ -16,7 +16,10 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\GoogleChatController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -173,3 +176,4 @@ Route::get('/test-google-config', function () {
         'redirect_uri' => config('google.redirect_uri'),
     ]);
 });
+
